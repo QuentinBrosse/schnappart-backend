@@ -1,0 +1,1 @@
+[{"model": "api.immosource", "pk": 1, "fields": {"name": "Leboncoin", "host_regex": "https?:\\/\\/www.leboncoin.[a-z]{2,3}\\/", "order_query_string": "sp=1"}}, {"model": "api.immosource", "pk": 2, "fields": {"name": "SeLoger", "host_regex": "https?:\\/\\/www.seloger.[a-z]{2,3}\\/", "order_query_string": "sort=d_dt_crea"}}]
