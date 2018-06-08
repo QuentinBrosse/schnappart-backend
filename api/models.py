@@ -71,6 +71,8 @@ class SearchResult(models.Model):
     images = ArrayField(models.URLField(max_length=255), blank=True, null=True)
     zipcode = models.CharField(max_length=10)
     city = models.CharField(max_length=80)
+    ges = models.CharField(max_length=1, blank=True, null=True)
+    energy_rate = models.CharField(max_length=1, blank=True, null=True)
 
     def __str__(self):
         return self.title
