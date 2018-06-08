@@ -1,5 +1,10 @@
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from urllib import parse as urlparse
+from urllib.parse import urlencode
+import re
 
 
 class ImmoSource(models.Model):
@@ -26,6 +31,25 @@ class ImmoSource(models.Model):
 class Search(models.Model):
     url = models.CharField(max_length=255)
     immo_source = models.ForeignKey(ImmoSource, on_delete=models.PROTECT)
+
+    def order_url(self, immo_source=None):
+        immo_source = immo_source or self.immo_source
+        params = immo_source.order_query_string.split('=')
+        url_parts = list(urlparse.urlparse(self.url))
+        query_strings = dict(urlparse.parse_qsl(url_parts[4]))
+        query_strings[params[0]] = params[1]
+        url_parts[4] = urlencode(query_strings)
+        self.url = urlparse.urlunparse(url_parts)
+
+    def clean(self):
+        immo_sources = ImmoSource.objects.all()
+        for immo_src in immo_sources:
+            match = re.match(immo_src.host_regex, self.url)
+            if match:
+                self.immo_source = immo_src
+                self.order_url()
+                return
+        raise ValidationError(_('This website is not supported.'))
 
     def __str__(self):
         return '{}: {}'.format(self.immo_source, self.url)

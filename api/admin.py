@@ -3,4 +3,10 @@ from .models import Project, ImmoSource, Search
 
 admin.site.register(Project)
 admin.site.register(ImmoSource)
-admin.site.register(Search)
+
+
+class SearchAdmin(admin.ModelAdmin):
+    fields = ('url',)
+    list_display = ('immo_source', 'url')
+
+admin.site.register(Search, SearchAdmin)
