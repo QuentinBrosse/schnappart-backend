@@ -64,7 +64,7 @@ class SearchResult(models.Model):
     price = models.FloatField()
     including_charges = models.BooleanField(default=True)
     publication_date = models.DateTimeField()
-    type_of_good = models.CharField(max_length=100, blank=True, null=True)
+    real_estate_type = models.CharField(max_length=100, blank=True, null=True)
     rooms = models.IntegerField()
     furnished = models.NullBooleanField(blank=True, null=True)
     surface = models.FloatField()
