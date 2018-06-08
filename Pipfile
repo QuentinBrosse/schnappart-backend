@@ -5,6 +5,11 @@ name = "schnappart"
 
 [packages]
 django = "*"
+"psycopg2-binary" = "*"
+
+
+
+
 
 
 
@@ -13,6 +18,7 @@ django = "*"
 pylint = "*"
 "pep8" = "*"
 "pylint-django" = "*"
+docker = "*"
 
 
 

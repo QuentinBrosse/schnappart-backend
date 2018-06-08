@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core',
     'users',
     'api',
 ]
@@ -77,8 +78,15 @@ WSGI_APPLICATION = 'schnappart.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': (
+            os.getenv('DATABASES_DEFAULT_ENGINE') or
+            'django.db.backends.postgresql_psycopg2'
+        ),
+        'HOST': os.getenv('DATABASES_DEFAULT_HOST'),
+        'NAME': os.getenv('DATABASES_DEFAULT_NAME'),
+        'USER': os.getenv('DATABASES_DEFAULT_USER'),
+        'PASSWORD': os.getenv('DATABASES_DEFAULT_PASSWORD'),
+        'PORT': os.getenv('DATABASES_DEFAULT_PORT'),
     }
 }
 
