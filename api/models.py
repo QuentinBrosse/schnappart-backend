@@ -74,7 +74,7 @@ class SearchResult(models.Model):
     original_id = models.CharField(max_length=40)
     title = models.CharField(max_length=255)
     price = models.FloatField()
-    including_charges = models.BooleanField(default=True)
+    charges_included = models.BooleanField(default=True)
     publication_date = models.DateTimeField()
     real_estate_type = models.CharField(max_length=100, blank=True, null=True)
     rooms = models.IntegerField()
