@@ -29,8 +29,20 @@ class ImmoSource(models.Model):
         return self.name
 
 
+class Project(models.Model):
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return '{} (by {})'.format(self.name, self.user)
+
+
 class Search(models.Model):
     url = models.URLField(max_length=255)
+    project = models.ForeignKey(Project, on_delete=models.PROTECT)
     immo_source = models.ForeignKey(ImmoSource, on_delete=models.PROTECT)
 
     def order_url(self, immo_source=None):
@@ -76,14 +88,3 @@ class SearchResult(models.Model):
 
     def __str__(self):
         return self.title
-
-
-class Project(models.Model):
-    name = models.CharField(max_length=100)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
-    )
-
-    def __str__(self):
-        return '{} (by {})'.format(self.name, self.user)
