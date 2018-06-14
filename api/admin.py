@@ -14,4 +14,13 @@ class SearchAdmin(admin.ModelAdmin):
 
 admin.site.register(Search, SearchAdmin)
 
-admin.site.register(SearchResult)
+
+class SearchResultAdmin(admin.ModelAdmin):
+
+    def project(self, obj):
+        return obj.search.project
+
+    list_display = ('title',)
+    list_filter = ('search__project__name', 'zipcode')
+
+admin.site.register(SearchResult, SearchResultAdmin)

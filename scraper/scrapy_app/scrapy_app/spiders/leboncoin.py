@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+import pytz
 import scrapy
 from scrapy.exceptions import CloseSpider
 
@@ -17,8 +18,9 @@ class LeboncoinSpider(scrapy.Spider):
     search_url = None
     start_urls = []
 
-    current_page = 1
-    max_page = 2
+    nbr_of_pages = 2
+
+    DEBUG_max_items = None
 
     def __init__(self, search_url=None, search_id=None, *args, **kwargs):
         super(LeboncoinSpider, self).__init__(*args, **kwargs)
@@ -32,12 +34,16 @@ class LeboncoinSpider(scrapy.Spider):
     def parse(self, response):
         # Follow articles links
         for article_href in response.css('.tabsContent ul > li a::attr(href)'):
+            if self.DEBUG_max_items:
+                self.DEBUG_max_items -= 1
+                if self.DEBUG_max_items <= 0:
+                    break
             yield response.follow(article_href, self.parse_article)
 
         # Follow pagination (max=2)
-        if self.current_page <= self.max_page:
+        if self.nbr_of_pages <= 0:
             for pagination_href in response.css('#next::attr(href)'):
-                self.current_page += 1
+                self.nbr_of_pages -= 1
                 yield response.follow(pagination_href, self.parse)
 
     def parse_article(self, response):
@@ -56,11 +62,11 @@ class LeboncoinSpider(scrapy.Spider):
             'url': article['url'],
             'original_id': article['list_id'],
             'title': article['subject'],
+            'description': article['body'],
             'price': article['price'][0],
             'charges_included': LeboncoinSpider.get_attribute(
                 article, 'charges_included', lambda x: bool(int(x))),
-            'publication_date': datetime.strptime(
-                article['first_publication_date'], '%Y-%m-%d %H:%M:%S'),
+            'publication_date': self.get_publication_date(article),
             'real_estate_type': LeboncoinSpider.get_attribute(
                 article, 'real_estate_type', None, None, True),
             'rooms': LeboncoinSpider.get_attribute(
@@ -99,3 +105,11 @@ class LeboncoinSpider(scrapy.Spider):
         if images['nb_images'] > 0:
             return images['urls_large']
         return []
+    
+    @staticmethod
+    def get_publication_date(article):
+        date = datetime.strptime(
+                article['first_publication_date'],
+                '%Y-%m-%d %H:%M:%S'
+        )
+        return pytz.timezone('Europe/Paris').localize(date, is_dst=None)
