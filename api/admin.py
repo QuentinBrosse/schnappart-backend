@@ -10,7 +10,7 @@ admin.site.register(ImmoSource)
 
 class SearchAdmin(admin.ModelAdmin):
     fields = ('url', 'project')
-    list_display = ('immo_source', 'url')
+    list_display = ('immo_source', 'project', 'url')
 
 admin.site.register(Search, SearchAdmin)
 
