@@ -73,6 +73,7 @@ class SearchResult(models.Model):
     url = models.URLField(max_length=255)
     original_id = models.CharField(max_length=40)
     title = models.CharField(max_length=255)
+    description = models.TextField(max_length=5000)
     price = models.FloatField()
     charges_included = models.BooleanField(default=True)
     publication_date = models.DateTimeField()
