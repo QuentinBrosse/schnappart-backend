@@ -86,5 +86,8 @@ class SearchResult(models.Model):
     ges = models.CharField(max_length=1, blank=True, null=True)
     energy_rate = models.CharField(max_length=1, blank=True, null=True)
 
+    class Meta:
+        unique_together = ('search', 'original_id')
+
     def __str__(self):
         return self.title
