@@ -109,7 +109,7 @@ class LeboncoinSpider(scrapy.Spider):
     @staticmethod
     def get_publication_date(article):
         date = datetime.strptime(
-                article['first_publication_date'],
-                '%Y-%m-%d %H:%M:%S'
+            article['first_publication_date'],
+            '%Y-%m-%d %H:%M:%S'
         )
         return pytz.timezone('Europe/Paris').localize(date, is_dst=None)
