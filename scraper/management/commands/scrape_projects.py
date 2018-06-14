@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         projects = self.get_projects(options)
-        self.stderr.write('{} projects found.'.format(len(projects)))
+        self.stdout.write('{} projects found.'.format(len(projects)))
 
         os.environ.setdefault(
             'SCRAPY_SETTINGS_MODULE',
@@ -43,7 +43,7 @@ class Command(BaseCommand):
             for search in project.search_set.all():
                 spider = search.immo_source.name.lower()
 
-                self.stderr.write(
+                self.stdout.write(
                     'Start crawl for project {} | search {}'
                     .format(project.id, search.id)
                 )
@@ -55,7 +55,7 @@ class Command(BaseCommand):
 
         process.start(stop_after_crawl=True)
 
-        self.stderr.write('All crawls are finished !')
+        self.stdout.write('All crawls are finished !')
 
     @staticmethod
     def get_projects(options):

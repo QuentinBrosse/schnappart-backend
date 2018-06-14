@@ -5,9 +5,10 @@ name = "schnappart"
 
 [packages]
 
-Django = "*"
+django = "*"
 "psycopg2-binary" = "*"
-Scrapy = "*"
+scrapy = "*"
+requests = "*"
 
 
 

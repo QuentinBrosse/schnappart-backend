@@ -21,6 +21,6 @@ class SearchResultAdmin(admin.ModelAdmin):
         return obj.search.project
 
     list_display = ('title',)
-    list_filter = ('search__project__name', 'zipcode')
+    list_filter = ('search__project__name', 'zipcode', 'alive')
 
 admin.site.register(SearchResult, SearchResultAdmin)

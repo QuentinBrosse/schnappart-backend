@@ -86,6 +86,7 @@ class SearchResult(models.Model):
     city = models.CharField(max_length=80)
     ges = models.CharField(max_length=1, blank=True, null=True)
     energy_rate = models.CharField(max_length=1, blank=True, null=True)
+    alive = models.BooleanField(default=True)
 
     class Meta:
         unique_together = ('search', 'original_id')
