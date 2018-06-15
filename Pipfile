@@ -9,6 +9,9 @@ django = "*"
 "psycopg2-binary" = "*"
 scrapy = "*"
 requests = "*"
+djangorestframework = "*"
+markdown = "*"
+"django-filter" = "*"
 
 
 

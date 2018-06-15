@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
     'core',
     'users',
     'api',
@@ -134,3 +136,13 @@ STATIC_URL = '/static/'
 # User Model
 # https://docs.djangoproject.com/en/2.0/topics/auth/customizing/#using-a-custom-user-model-when-starting-a-project
 AUTH_USER_MODEL = 'users.User'
+
+
+# Django Rest Framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        # For browsable API
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
