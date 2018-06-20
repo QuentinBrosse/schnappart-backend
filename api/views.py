@@ -29,7 +29,7 @@ class CustomAuthToken(ObtainAuthToken):
 
 class SearchResultListView(ListAPIView):
     """
-    List search results by project.
+    List accepted search results by project.
     """
 
     serializer_class = SearchResultSerializer
@@ -47,10 +47,82 @@ class SearchResultListView(ListAPIView):
         return SearchResult.objects \
             .filter(
                 search__project=project,
+                accepted=True,
                 alive=True,
             ) \
             .order_by('-publication_date') \
             .all()
+
+
+class SearchResultPendingListView(ListAPIView):
+    """
+    List pending search results by project. (where accepted=None)
+    """
+
+    serializer_class = SearchResultSerializer
+    lookup_url_kwarg = 'project_pk'
+    permission_classes = (IsOwner,)
+
+    def get_queryset(self):
+        """
+        This view should return a list of all SearchResult by
+        the project pk passed in the URL.
+        """
+        project_pk = self.kwargs['project_pk']
+        project = Project.objects.get(pk=project_pk)
+        self.check_object_permissions(self.request, project)
+        return SearchResult.objects \
+            .filter(
+                search__project=project,
+                accepted=None,
+                alive=True,
+            ) \
+            .order_by('-publication_date') \
+            .all()
+
+
+class SearchResultAcceptView(UpdateAPIView):
+    """
+    Accept a search result.
+    """
+
+    queryset = SearchResult.objects.all()
+    serializer_class = SearchResultSerializer
+    permission_classes = (IsOwnerOfSearchResult,)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance,
+            data={'accepted': True},
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
+
+
+class SearchResultRefuseView(UpdateAPIView):
+    """
+    Refuse a search result.
+    """
+
+    queryset = SearchResult.objects.all()
+    serializer_class = SearchResultSerializer
+    permission_classes = (IsOwnerOfSearchResult,)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance,
+            data={'accepted': False},
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
 
 
 class SearchResultUpdateView(UpdateAPIView):

@@ -9,7 +9,19 @@ urlpatterns = [
         views.SearchResultListView.as_view()
     ),
     path(
-        'search-results/<int:pk>/',
-        views.SearchResultUpdateView.as_view()
-    )
+        'search-results/by-project/<int:project_pk>/pending',
+        views.SearchResultPendingListView.as_view()
+    ),
+    path(
+        'search-results/<int:pk>/accept',
+        views.SearchResultAcceptView.as_view()
+    ),
+    path(
+        'search-results/<int:pk>/refuse',
+        views.SearchResultRefuseView.as_view()
+    ),
+    # path(
+    #     'search-results/<int:pk>/',
+    #     views.SearchResultUpdateView.as_view()
+    # )
 ]
