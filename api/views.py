@@ -21,6 +21,9 @@ class CustomAuthToken(ObtainAuthToken):
         token, _ = Token.objects.get_or_create(user=user)
         user_dict = model_to_dict(user)
         user_dict['authToken'] = token.key
+        user_dict['projects'] = Project.objects \
+            .filter(user=user) \
+            .values_list('id', flat=True)
         return Response(user_dict)
 
 
