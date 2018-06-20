@@ -9,15 +9,15 @@ urlpatterns = [
         views.SearchResultListView.as_view()
     ),
     path(
-        'search-results/by-project/<int:project_pk>/pending',
+        'search-results/by-project/<int:project_pk>/pending/',
         views.SearchResultPendingListView.as_view()
     ),
     path(
-        'search-results/<int:pk>/accept',
+        'search-results/<int:pk>/accept/',
         views.SearchResultAcceptView.as_view()
     ),
     path(
-        'search-results/<int:pk>/refuse',
+        'search-results/<int:pk>/refuse/',
         views.SearchResultRefuseView.as_view()
     ),
     # path(
