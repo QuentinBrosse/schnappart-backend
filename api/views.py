@@ -1,11 +1,11 @@
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework.generics import ListAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, UpdateAPIView, CreateAPIView
 from django.forms.models import model_to_dict
-from .models import SearchResult, Project
-from .serializers import SearchResultSerializer
-from .permissions import IsOwner, IsOwnerOfSearchResult
+from .models import SearchResult, Project, SearchResultFeature
+from . import serializers
+from . import permissions
 
 
 class CustomAuthToken(ObtainAuthToken):
@@ -32,9 +32,9 @@ class SearchResultListView(ListAPIView):
     List accepted search results by project.
     """
 
-    serializer_class = SearchResultSerializer
+    serializer_class = serializers.SearchResultSerializer
     lookup_url_kwarg = 'project_pk'
-    permission_classes = (IsOwner,)
+    permission_classes = (permissions.IsOwner,)
 
     def get_queryset(self):
         """
@@ -59,9 +59,9 @@ class SearchResultPendingListView(ListAPIView):
     List pending search results by project. (where accepted=None)
     """
 
-    serializer_class = SearchResultSerializer
+    serializer_class = serializers.SearchResultSerializer
     lookup_url_kwarg = 'project_pk'
-    permission_classes = (IsOwner,)
+    permission_classes = (permissions.IsOwner,)
 
     def get_queryset(self):
         """
@@ -87,8 +87,8 @@ class SearchResultAcceptView(UpdateAPIView):
     """
 
     queryset = SearchResult.objects.all()
-    serializer_class = SearchResultSerializer
-    permission_classes = (IsOwnerOfSearchResult,)
+    serializer_class = serializers.SearchResultSerializer
+    permission_classes = (permissions.IsOwnerOfSearchResult,)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -109,8 +109,8 @@ class SearchResultRefuseView(UpdateAPIView):
     """
 
     queryset = SearchResult.objects.all()
-    serializer_class = SearchResultSerializer
-    permission_classes = (IsOwnerOfSearchResult,)
+    serializer_class = serializers.SearchResultSerializer
+    permission_classes = (permissions.IsOwnerOfSearchResult,)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -131,5 +131,15 @@ class SearchResultUpdateView(UpdateAPIView):
     """
 
     queryset = SearchResult.objects.all()
-    serializer_class = SearchResultSerializer
-    permission_classes = (IsOwnerOfSearchResult,)
+    serializer_class = serializers.SearchResultSerializer
+    permission_classes = (permissions.IsOwnerOfSearchResult,)
+
+
+class SearchResultFeatureCreateView(CreateAPIView):
+    """
+    Creatre a search result feature.
+    """
+
+    queryset = SearchResultFeature.objects.all()
+    serializer_class = serializers.SearchResultFeatureSerializer
+    permission_classes = (permissions.IsOwnerOfSearchResultM2M,)

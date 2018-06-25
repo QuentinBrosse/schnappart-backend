@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from .models import SearchResult
 
 
 class IsOwner(permissions.BasePermission):
@@ -17,3 +18,15 @@ class IsOwnerOfSearchResult(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj.search.project.user == request.user
+
+
+class IsOwnerOfSearchResultM2M(permissions.BasePermission):
+    """
+    For all methods, allow only the owner of the SearchResult
+    (for many-to-many).
+    """
+
+    def has_permission(self, request, view):
+        search_result_id = int(request.data['search_result'])
+        search_result = SearchResult.objects.get(pk=search_result_id)
+        return search_result.search.project.user == request.user

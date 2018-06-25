@@ -20,6 +20,10 @@ urlpatterns = [
         'search-results/<int:pk>/refuse/',
         views.SearchResultRefuseView.as_view()
     ),
+    path(
+        'search-result-feature/',
+        views.SearchResultFeatureCreateView.as_view(),
+    )
     # path(
     #     'search-results/<int:pk>/',
     #     views.SearchResultUpdateView.as_view()

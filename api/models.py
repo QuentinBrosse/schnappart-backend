@@ -68,6 +68,14 @@ class Search(models.Model):
         return '{}: {}'.format(self.immo_source, self.url)
 
 
+class Feature(models.Model):
+    label = models.CharField(max_length=100)
+    key = models.SlugField(unique=True)
+
+    def __str__(self):
+        return self.label
+
+
 class SearchResult(models.Model):
     search = models.ForeignKey(Search, on_delete=models.PROTECT)
     url = models.URLField(max_length=255)
@@ -88,9 +96,23 @@ class SearchResult(models.Model):
     energy_rate = models.CharField(max_length=1, blank=True, null=True)
     alive = models.BooleanField(default=True)
     accepted = models.NullBooleanField(default=None)
+    features = models.ManyToManyField(Feature, through='SearchResultFeature')
 
     class Meta:
         unique_together = ('search', 'original_id')
 
     def __str__(self):
         return self.title
+
+
+class SearchResultFeature(models.Model):
+    search_result = models.ForeignKey(SearchResult, on_delete=models.PROTECT)
+    feature = models.ForeignKey(Feature, on_delete=models.PROTECT)
+    value = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = ('search_result', 'feature')
+
+    def __str__(self):
+        return '{}.{} = {}'.format(
+            self.search_result, self.feature, self.value)
