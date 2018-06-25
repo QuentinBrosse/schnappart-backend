@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import SearchResult, SearchResultFeature
+from .models import SearchResult, SearchResultFeature, Feature
 
 
 class SearchResultFeatureSerializer(serializers.ModelSerializer):
@@ -29,3 +29,9 @@ class SearchResultSerializer(serializers.ModelSerializer):
         model = SearchResult
         fields = '__all__'
         depth = 1
+
+
+class FeatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feature
+        fields = '__all__'

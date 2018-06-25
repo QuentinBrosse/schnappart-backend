@@ -23,6 +23,10 @@ urlpatterns = [
     path(
         'search-result-feature/',
         views.SearchResultFeatureCreateView.as_view(),
+    ),
+    path(
+        'feature/',
+        views.FeatureListCreateView.as_view(),
     )
     # path(
     #     'search-results/<int:pk>/',

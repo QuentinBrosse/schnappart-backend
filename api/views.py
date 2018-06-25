@@ -1,9 +1,10 @@
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework.generics import ListAPIView, UpdateAPIView, CreateAPIView
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework import generics
 from django.forms.models import model_to_dict
-from .models import SearchResult, Project, SearchResultFeature
+from .models import SearchResult, Project, SearchResultFeature, Feature
 from . import serializers
 from . import permissions
 
@@ -27,7 +28,7 @@ class CustomAuthToken(ObtainAuthToken):
         return Response(user_dict)
 
 
-class SearchResultListView(ListAPIView):
+class SearchResultListView(generics.ListAPIView):
     """
     List accepted search results by project.
     """
@@ -54,7 +55,7 @@ class SearchResultListView(ListAPIView):
             .all()
 
 
-class SearchResultPendingListView(ListAPIView):
+class SearchResultPendingListView(generics.ListAPIView):
     """
     List pending search results by project. (where accepted=None)
     """
@@ -81,7 +82,7 @@ class SearchResultPendingListView(ListAPIView):
             .all()
 
 
-class SearchResultAcceptView(UpdateAPIView):
+class SearchResultAcceptView(generics.UpdateAPIView):
     """
     Accept a search result.
     """
@@ -103,7 +104,7 @@ class SearchResultAcceptView(UpdateAPIView):
         return Response(serializer.data)
 
 
-class SearchResultRefuseView(UpdateAPIView):
+class SearchResultRefuseView(generics.UpdateAPIView):
     """
     Refuse a search result.
     """
@@ -125,7 +126,7 @@ class SearchResultRefuseView(UpdateAPIView):
         return Response(serializer.data)
 
 
-class SearchResultUpdateView(UpdateAPIView):
+class SearchResultUpdateView(generics.UpdateAPIView):
     """
     Update a search result.
     """
@@ -135,7 +136,7 @@ class SearchResultUpdateView(UpdateAPIView):
     permission_classes = (permissions.IsOwnerOfSearchResult,)
 
 
-class SearchResultFeatureCreateView(CreateAPIView):
+class SearchResultFeatureCreateView(generics.CreateAPIView):
     """
     Creatre a search result feature.
     """
@@ -143,3 +144,13 @@ class SearchResultFeatureCreateView(CreateAPIView):
     queryset = SearchResultFeature.objects.all()
     serializer_class = serializers.SearchResultFeatureSerializer
     permission_classes = (permissions.IsOwnerOfSearchResultM2M,)
+
+
+class FeatureListCreateView(generics.ListCreateAPIView):
+    """
+    List and create features.
+    """
+
+    queryset = Feature.objects.all()
+    serializer_class = serializers.FeatureSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
