@@ -18,6 +18,7 @@ class LeboncoinSpider(scrapy.Spider):
     search_url = None
     start_urls = []
 
+    cur_nbr_of_pages = 1
     nbr_of_pages = 2
 
     DEBUG_max_items = None
@@ -32,21 +33,7 @@ class LeboncoinSpider(scrapy.Spider):
         self.start_urls = [search_url]
 
     def parse(self, response):
-        # Follow articles links
-        for article_href in response.css('.tabsContent ul > li a::attr(href)'):
-            if self.DEBUG_max_items:
-                self.DEBUG_max_items -= 1
-                if self.DEBUG_max_items <= 0:
-                    break
-            yield response.follow(article_href, self.parse_article)
-
-        # Follow pagination (max=2)
-        if self.nbr_of_pages <= 0:
-            for pagination_href in response.css('#next::attr(href)'):
-                self.nbr_of_pages -= 1
-                yield response.follow(pagination_href, self.parse)
-
-    def parse_article(self, response):
+        # Parse articles
         flux_state_script = response \
             .xpath("//script[contains(., 'window.FLUX_STATE')]/text()")
 
@@ -55,34 +42,44 @@ class LeboncoinSpider(scrapy.Spider):
 
         flux_state_json = flux_state_script.extract_first()[20:]
         flux_state = json.loads(flux_state_json)
-        article = flux_state['adview']
+        articles = flux_state['adSearch']['data']['ads']
 
-        yield {
-            'search': self.search_id,
-            'url': article['url'],
-            'original_id': article['list_id'],
-            'title': article['subject'],
-            'description': article['body'],
-            'price': article['price'][0],
-            'charges_included': LeboncoinSpider.get_attribute(
-                article, 'charges_included', lambda x: bool(int(x))),
-            'publication_date': self.get_publication_date(article),
-            'real_estate_type': LeboncoinSpider.get_attribute(
-                article, 'real_estate_type', None, None, True),
-            'rooms': LeboncoinSpider.get_attribute(
-                article, 'rooms', int),
-            'furnished': LeboncoinSpider.get_attribute(
-                article, 'furnished', lambda x: bool(int(x))),
-            'surface': LeboncoinSpider.get_attribute(
-                article, 'square', int),
-            'images': LeboncoinSpider.get_images(article),
-            'zipcode': article['location']['zipcode'],
-            'city': article['location']['city'],
-            'ges': LeboncoinSpider.get_attribute(
-                article, 'ges'),
-            'energy_rate': LeboncoinSpider.get_attribute(
-                article, 'energy_rate'),
-        }
+        print(articles)
+
+        for article in articles:
+            yield {
+                'search': self.search_id,
+                'url': article['url'],
+                'original_id': article['list_id'],
+                'title': article['subject'],
+                'description': article['body'],
+                'price': article['price'][0],
+                'charges_included': LeboncoinSpider.get_attribute(
+                    article, 'charges_included', lambda x: bool(int(x))),
+                'publication_date': self.get_publication_date(article),
+                'real_estate_type': LeboncoinSpider.get_attribute(
+                    article, 'real_estate_type', None, None, True),
+                'rooms': LeboncoinSpider.get_attribute(
+                    article, 'rooms', int),
+                'furnished': LeboncoinSpider.get_attribute(
+                    article, 'furnished', lambda x: bool(int(x))),
+                'surface': LeboncoinSpider.get_attribute(
+                    article, 'square', int),
+                'images': LeboncoinSpider.get_images(article),
+                'zipcode': article['location']['zipcode'],
+                'city': article['location']['city'],
+                'ges': LeboncoinSpider.get_attribute(
+                    article, 'ges'),
+                'energy_rate': LeboncoinSpider.get_attribute(
+                    article, 'energy_rate'),
+            }
+
+        # Follow pagination (max=nbr_of_pages)
+        if self.cur_nbr_of_pages < self.nbr_of_pages:
+            self.cur_nbr_of_pages += 1
+            next_url = '{}/p-{}'.format(
+                self.start_urls[0], self.cur_nbr_of_pages)
+            yield response.follow(next_url, self.parse)
 
     @staticmethod
     def get_attribute(article, attribute_key, transformator=None,
@@ -105,7 +102,7 @@ class LeboncoinSpider(scrapy.Spider):
         if images['nb_images'] > 0:
             return images['urls_large']
         return []
-    
+
     @staticmethod
     def get_publication_date(article):
         date = datetime.strptime(
