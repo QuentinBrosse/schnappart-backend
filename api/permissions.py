@@ -27,6 +27,8 @@ class IsOwnerOfSearchResultM2M(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        search_result_id = int(request.data['search_result'])
-        search_result = SearchResult.objects.get(pk=search_result_id)
+        search_result_id = request.data.get('search_result', None)
+        if not search_result_id:
+            return True
+        search_result = SearchResult.objects.get(pk=int(search_result_id))
         return search_result.search.project.user == request.user
