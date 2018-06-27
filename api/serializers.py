@@ -9,14 +9,14 @@ class SearchResultFeatureSerializer(serializers.ModelSerializer):
 
 
 class SearchResultFeatureReadOnlySerializer(serializers.ModelSerializer):
-    relation_id = serializers.ReadOnlyField(source='id')
+    id = serializers.ReadOnlyField()
     value = serializers.ReadOnlyField()
-    key = serializers.ReadOnlyField(source='feature.key')
-    label = serializers.ReadOnlyField(source='feature.label')
+    search_result = serializers.ReadOnlyField(source='search_result.id')
 
     class Meta:
         model = SearchResultFeature
-        fields = ('relation_id', 'value', 'key', 'label')
+        fields = ('id', 'value', 'feature', 'search_result')
+        depth = 1
 
 
 class SearchResultSerializer(serializers.ModelSerializer):

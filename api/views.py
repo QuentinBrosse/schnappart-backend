@@ -2,7 +2,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework import generics
+from drf_rw_serializers import generics
 from django.forms.models import model_to_dict
 from .models import SearchResult, Project, SearchResultFeature, Feature
 from . import serializers
@@ -142,6 +142,7 @@ class SearchResultFeatureCreateView(generics.CreateAPIView):
     """
 
     queryset = SearchResultFeature.objects.all()
+    read_serializer_class = serializers.SearchResultFeatureReadOnlySerializer
     serializer_class = serializers.SearchResultFeatureSerializer
     permission_classes = (permissions.IsOwnerOfSearchResultM2M,)
 
