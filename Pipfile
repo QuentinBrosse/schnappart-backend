@@ -12,6 +12,9 @@ requests = "*"
 djangorestframework = "*"
 markdown = "*"
 "django-filter" = "*"
+"drf-rw-serializers" = "*"
+"django-cors-headers" = "*"
+"pep8" = "*"
 
 
 
